@@ -56,14 +56,14 @@ namespace DechkoWebApp.Infrastructure
             }
             dataCategory.Categories.AddRange(new[]
             {
-                new Category {Name = "Dolls"},
-                new Category {Name = "Constructors"},
-                new Category {Name = "Stuff toys"},
-                new Category {Name = "Baby toys"},
-                new Category {Name = "Interactive toys"},
-                new Category {Name = "Board games"},
-                new Category {Name = "Cars"},
-                new Category {Name = "Balls"}
+                new Category {Name = "Кукли"},
+                new Category {Name = "Конструктори"},
+                new Category {Name = "Плюшени играчки"},
+                new Category {Name = "Бебешки играчки"},
+                new Category {Name = "Интерактивни играчки"},
+                new Category {Name = "Настолни игри"},
+                new Category {Name = "Коли"},
+                new Category {Name = "Топки"}
             });
             dataCategory.SaveChanges();
         }

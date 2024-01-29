@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<DechkoWebApp.Models.Product.ProductIndexVM>
+@using DechkoWebApp.Models.Order;
 
 @{
     ViewData["Title"] = "Index";
@@ -19,44 +20,49 @@
         Марка: <input type="text" name="SearchStringBrandName" />
         Категория: <input type="text" name="SearchStringCategoryName" />
 
-        <input type="submit" value="Filter" />
+        <input type="submit" value="Филтър" />
     </p>
 </form>
+
+
+
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @*@Html.DisplayNameFor(model => model.Name)*@
-                Име на продукта
-            </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.CategoryId)
-                </th>*@
-            <th>
-                @*@Html.DisplayNameFor(model => model.CategoryName)*@
-                 Категория
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             @*<th>
                     @Html.DisplayNameFor(model => model.BrandId)
                 </th>*@
             <th>
-               Име на марката
+                @Html.DisplayNameFor(model => model.BrandName)
+            </th>
+            @*<th>
+                    @Html.DisplayNameFor(model => model.CategoryId)
+                </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.CategoryName)
             </th>
             <th>
-                Описание на продукта
+                @Html.DisplayNameFor(model => model.Picture)
             </th>
             <th>
-                Снимка на продукта
+                @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                Цена на продукта
+                @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-               Наличност
+                @Html.DisplayNameFor(model => model.Discount)
             </th>
-            <th>
-                Отстъпка
-            </th>
+            @if (this.User.Identity.IsAuthenticated)
+            {
+                <th>
+                    Поръчка
+                </th>
+            }
             <th></th>
         </tr>
     </thead>
@@ -68,38 +74,50 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 @*<td>
-                        @Html.DisplayFor(modelItem => item.CategoryId)
-                    </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.CategoryName)
-                </td>
-                @* <td>
                         @Html.DisplayFor(modelItem => item.BrandId)
                     </td>*@
                 <td>
                     @Html.DisplayFor(modelItem => item.BrandName)
                 </td>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.CategoryId)
+                    </td>*@
                 <td>
-                    @Html.DisplayFor(modelItem => item.Description)
+                    @Html.DisplayFor(modelItem => item.CategoryName)
                 </td>
                 <td>
-                    <img src="@Html.DisplayFor(modelItem => item.Picture)" width="100" alt="Image" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
+                    <img src="@Html.DisplayFor(modelItem => item.Picture)" alt="Image" width="100" />
+                    @*@Html.DisplayFor(modelItem => item.Pictute)*@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Quantity)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Discount)
+                    @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
+                    @Html.DisplayFor(modelItem => item.Discount) %
+                </td>
+                @if (this.User.Identity.IsAuthenticated)
+                {
+                    <td>
+                        @await Html.PartialAsync("_OrderPartialView", new OrderConfirmVM
+                   {
+                       ProductId = item.Id
+
+                   })
+                    </td>
+                }
+                <td>
                     @if ((this.User.Identity.IsAuthenticated) && (this.User.IsInRole("Administrator")))
-                    {<a asp-action="Edit" asp-route-id="@item.Id">Редактиране</a>} |
-                    <a asp-action="Details" asp-route-id="@item.Id">Детайли за продукта</a>|
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Редактирай</a>
+                    } |
+                    <a asp-action="Details" asp-route-id="@item.Id">Детайли</a> |
                     @if ((this.User.Identity.IsAuthenticated) && (this.User.IsInRole("Administrator")))
-                    {<a asp-action="Delete" asp-route-id="@item.Id">Изтрий продукт</a>}
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id">Изтрий</a>
+                    }
                 </td>
             </tr>
         }
@@ -108,3 +126,5 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+

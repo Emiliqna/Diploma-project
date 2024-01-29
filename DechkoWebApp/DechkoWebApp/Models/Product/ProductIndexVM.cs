@@ -12,30 +12,33 @@ namespace DechkoWebApp.Models.Product
         [Key]
         public int Id { get; set; }
 
-        [Display(Name = "Product name")]
+        [Display(Name = "Име на продукта")]
         public string Name { get; set; }
 
 
-        [Display(Name = "Category")]
+      
         public int CategoryId { get; set; }
+        [Display(Name = "Категория")]
         public string CategoryName { get; set; }
 
-       [Display(Name = "Brand")]
+    
         public int BrandId { get; set; }
+        [Display(Name = "Марка")]
         public string BrandName { get; set; }
 
-        [Display(Name = "Description of product")]
+        [Display(Name = "Описание на продукта")]
         public string Description { get; set; }
 
-        [Display(Name = "Product picture")]
+        [Display(Name = "Снимка на продукта")]
         public string Picture { get; set; }
 
-        [Display(Name = "Price")]
+        [Display(Name = "Цена")]
         public decimal Price { get; set; }
 
-       
+       [Display(Name = "Наличност")]
         public int Quantity { get; set; }
 
+        [Display(Name = "Остъпка")]
         public decimal Discount { get; set; }
 
        

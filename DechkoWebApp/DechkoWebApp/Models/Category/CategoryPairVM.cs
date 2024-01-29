@@ -10,7 +10,7 @@ namespace DechkoWebApp.Models.Category
     {
         public int Id { get; set; }
 
-        [Display(Name = "Category")]
+        [Display(Name = "Категория")]
         public string Name { get; set; }
     }
 }
