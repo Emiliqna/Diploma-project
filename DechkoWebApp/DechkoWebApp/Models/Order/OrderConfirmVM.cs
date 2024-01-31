@@ -24,12 +24,12 @@ namespace DechkoWebApp.Models.Order
         [Display(Name = "Снимка на продукта")]
         public string Picture { get; set; }
 
-        [Required]
+        /*[Required]
         [Display(Name = "Номер на потребител ")]
         public string UserId { get; set; }
 
         [Display(Name = "Потребител")]
-        public string User { get; set; }
+        public string User { get; set; }*/
 
         [Display(Name = "Описание на продукта")]
         public string Description { get; set; }

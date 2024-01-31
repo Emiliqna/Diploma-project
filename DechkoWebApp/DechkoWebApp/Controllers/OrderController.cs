@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using DechkoWebApp.Abstraction;
 using DechkoWebApp.Data;
 using DechkoWebApp.Domain;
 using DechkoWebApp.Models.Order;
@@ -16,11 +17,13 @@ namespace DechkoWebApp.Controllers
     [Authorize]
     public class OrderController : Controller
     {
-        private readonly ApplicationDbContext context;
+        private readonly IProductService _productService;
+        private readonly IOrderService _orderService;
 
-        public OrderController(ApplicationDbContext context)
+        public OrderController(IProductService productService, IOrderService orderService)
         {
-            this.context = context;
+            _productService = productService;
+            _orderService = orderService;
         }
         // GET: OrderController
         //Създава списък за направените поръчки от всички потребители
@@ -28,77 +31,65 @@ namespace DechkoWebApp.Controllers
         [Authorize(Roles = "Administrator")]
         public ActionResult Index()
         {
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = context.Users.SingleOrDefault(u => u.Id == userId);
+            // string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //  var user = context.Users.SingleOrDefault(u => u.Id == userId);
 
-            List<OrderIndexVM> orders = context
-                .Orders
+            List<OrderIndexVM> orders = _orderService.GetOrders()
                 .Select(x => new OrderIndexVM
                 {
                     Id = x.Id,
                     OrderDate = x.OrderDate.ToString("dd-MMM-yyyy hh:mm", CultureInfo.InvariantCulture),
-                    Picture = x.Product.Picture,
-                    ProductId = x.ProductId,
-                    ProductName = x.Product.Name,
                     UserId = x.UserId,
                     User = x.User.UserName,
+                    ProductId = x.ProductId,
+                    ProductName = x.Product.Name,
+                    Picture = x.Product.Picture,
                     Quantity = x.Quantity,
                     Price = x.Price,
                     Discount = x.Discount,
-                    TotalPrice = x.TotalPrice
-
+                    TotalPrice = x.TotalPrice,
                 }).ToList();
             return View(orders);
         }
-      
-       //Служи за показване на направените от клиента(потребител) поръчки
-        public IActionResult MyOrders(string searchString)
+
+
+        //Служи за показване на направените от клиента(потребител) поръчки
+        public ActionResult MyOrders()
         {
             string currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = this.context.Users.SingleOrDefault(u => u.Id == currentUserId);
-           if (user == null)
-            {
-                return null;
-            }
-            List<OrderIndexVM> orders = context
-                .Orders
-                .Where(x => x.UserId == user.Id)
+            //  var user = context.Users.SingleOrDefault(u => u.Id == userId);
+
+            List<OrderIndexVM> orders = _orderService.GetOrdersByUserId(currentUserId)
                 .Select(x => new OrderIndexVM
                 {
-
                     Id = x.Id,
                     OrderDate = x.OrderDate.ToString("dd-MMM-yyyy hh:mm", CultureInfo.InvariantCulture),
-                    Picture = x.Product.Picture,
-                    ProductId = x.ProductId,
-                    ProductName = x.Product.Name,
                     UserId = x.UserId,
                     User = x.User.UserName,
+                    ProductId = x.ProductId,
+                    ProductName = x.Product.Name,
+                    Picture = x.Product.Picture,
                     Quantity = x.Quantity,
                     Price = x.Price,
                     Discount = x.Discount,
-                    TotalPrice = x.TotalPrice
+                    TotalPrice = x.TotalPrice,
                 }).ToList();
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                orders = orders.Where(o => o.ProductName.ToLower().Contains(searchString.ToLower())).ToList();
-            }
             return View(orders);
-
-
+        }
+        // GET: OrderController/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
         }
 
-        
         //Служи за създаване и потвърждаване на поръчка
         // GET: OrderController/Create
-     
         public ActionResult Create(int productId, int quantity)
         {
-            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = this.context.Users.SingleOrDefault(u => u.Id == userId);
-            var product = this.context.Products.SingleOrDefault(x => x.Id == productId);
-            if (user == null || product == null || product.Quantity < quantity)
+            Product product = _productService.GetProductById(productId);
+            if (product == null)
             {
-                return this.RedirectToAction("Index", "Product");
+                return NotFound();
             }
             OrderConfirmVM orderForDb = new OrderConfirmVM
             {
@@ -106,8 +97,6 @@ namespace DechkoWebApp.Controllers
                 ProductId = productId,
                 ProductName = product.Name,
                 Picture = product.Picture,
-                UserId = userId,
-                User = user.UserName,
                 Description = product.Description,
                 Quantity = quantity,
                 Price = product.Price,
@@ -122,37 +111,27 @@ namespace DechkoWebApp.Controllers
         // POST: OrderController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
         public ActionResult Create(OrderConfirmVM bindingModel)
         {
             if (this.ModelState.IsValid)
             {
-                string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var user = this.context.Users.SingleOrDefault(u => u.Id == userId);
-                var product = this.context.Products.SingleOrDefault(x => x.Id == bindingModel.ProductId);
-                if (user == null || product == null || product.Quantity < bindingModel.Quantity || bindingModel.Quantity == 0)
+                string currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var product = this._productService.GetProductById(bindingModel.ProductId);
+                if (currentUserId == null || product == null || product.Quantity < bindingModel.Quantity || product.Quantity == 0)
                 {
                     return this.RedirectToAction("Index", "Product");
                 }
-                Order orderForDb = new Order
-                {
-                    //Id = x.Id,
-                    OrderDate = DateTime.UtcNow,
-                    ProductId = bindingModel.ProductId,
-                    UserId = userId,
-                    Quantity = bindingModel.Quantity,
-                    Price = product.Price,
-                    Discount = product.Discount,
-                };
-                product.Quantity -= bindingModel.Quantity;
 
-                this.context.Products.Update(product);
-                this.context.Orders.Add(orderForDb);
-                this.context.SaveChanges();
+                _orderService.Create(bindingModel.ProductId, currentUserId, bindingModel.Quantity);
 
+                //при успешна поръчка се връща в списъка на продуктите
+                return this.RedirectToAction("Index", "Product");
             }
             return this.RedirectToAction("Index", "Product");
 
         }
     }
 }
+
+

@@ -46,6 +46,7 @@ namespace DechkoWebApp
             services.AddTransient<IBrandService, BrandService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IStatisticService, StatisticService>();
+            services.AddTransient<IOrderService, OrderService>();
             services.AddControllersWithViews();
             services.Configure<IdentityOptions>(options =>
             {
