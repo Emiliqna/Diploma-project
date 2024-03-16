@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Image\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DechkoWebApp.Core\DechkoWebApp.Core.csproj" />
     <ProjectReference Include="..\DechkoWebApp.Infrastructure\DechkoWebApp.Infrastructure.csproj" />
   </ItemGroup>
