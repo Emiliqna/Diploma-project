@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="~/css/styles.css" />
 </head>
 <body style="background-color: #ACE2E1;">
-    <header >
-        <nav style="background-color: #FEC7B4;" navbar navbar-expand-sm navbar-toggleable-sm navbar-light nav-fill bg-white border-bottom box-shadow mb-3">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light nav-fill bg-info border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Дечко</a>
+                <h5 style="margin:0 auto">Дечко</h5>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -29,7 +29,7 @@
                                    data-toggle="dropdown"
                                    aria-haspopup="true"
                                    aria-expanded="false">
-                                     Продукти
+                                    Продукти
                                 </a>
 
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -51,15 +51,15 @@
                                 </div>
                             </div>
                         </li>
-                        @if ((this.User.Identity.IsAuthenticated) && (this.User.IsInRole("Client") ||(this.User.IsInRole("Administrator"))))
+                        @if ((this.User.Identity.IsAuthenticated) && (this.User.IsInRole("Client") || (this.User.IsInRole("Administrator"))))
                         {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="MyOrders">Моите поръчки</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Order" asp-action="MyOrders">Моите поръчки</a>
+                            </li>
                         }
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Contacts">Контакти</a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Contacts">Контакти</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Поверителност</a>
                         </li>
