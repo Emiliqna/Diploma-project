@@ -63,7 +63,9 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Редактиране</a> |
+    @if ((this.User.Identity.IsAuthenticated) && (this.User.IsInRole("Administrator")))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Редактиране</a>} |
     <a asp-action="Index">Обратно към продуктите</a>
 </div>
 @section Scripts{ 
