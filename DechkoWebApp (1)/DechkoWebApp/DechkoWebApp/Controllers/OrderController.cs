@@ -25,14 +25,12 @@ namespace DechkoWebApp.Controllers
             _orderService = orderService;
         }
         // GET: OrderController
-        //Създава списък за направените поръчки от всички потребители
+        //Creating list for orders from all users
 
         [Authorize(Roles = "Administrator")]
         public ActionResult Index()
         {
-            // string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //  var user = context.Users.SingleOrDefault(u => u.Id == userId);
-
+           
             List<OrderIndexVM> orders = _orderService.GetOrders()
                 .Select(x => new OrderIndexVM
                 {
@@ -52,11 +50,11 @@ namespace DechkoWebApp.Controllers
         }
 
 
-        //Служи за показване на направените от клиента(потребител) поръчки
+        //Show all made orders from client
         public ActionResult MyOrders()
         {
             string currentUserId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //  var user = context.Users.SingleOrDefault(u => u.Id == userId);
+            
 
             List<OrderIndexVM> orders = _orderService.GetOrdersByUserId(currentUserId)
                 .Select(x => new OrderIndexVM
@@ -81,7 +79,7 @@ namespace DechkoWebApp.Controllers
             return View();
         }
 
-        //Служи за създаване и потвърждаване на поръчка
+        //For creating and confirm the order
         // GET: OrderController/Create
         public ActionResult Create(int productId, int quantity)
         {
@@ -124,7 +122,7 @@ namespace DechkoWebApp.Controllers
 
                 _orderService.Create(bindingModel.ProductId, currentUserId, bindingModel.Quantity);
 
-                //при успешна поръчка се връща в списъка на продуктите
+                //For successfull order returns to list of products
                 return this.RedirectToAction("Index", "Product");
             }
             return this.RedirectToAction("Index", "Product");

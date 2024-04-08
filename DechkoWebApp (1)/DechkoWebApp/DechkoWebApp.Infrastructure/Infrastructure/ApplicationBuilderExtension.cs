@@ -43,6 +43,7 @@ namespace DechkoWebApp.Infrastructure.Infrastructure
                 new Brand {Name= "Disney"},
                 new Brand {Name= "Fisher price"},
                 new Brand {Name= "Thinkle stars"},
+                
                 new Brand {Name= "Hot wheels"}
             });
             dataBrand.SaveChanges();
